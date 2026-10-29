@@ -163,10 +163,9 @@ def classify(img: Image.Image, model_id: str, api_key: str,
                 last_error = RuntimeError(f"Model not found at {base}")
                 continue
             r.raise_for_status()
-            scores = parse_scores(r.json())
-            if not scores:
-                raise RuntimeError("The model returned no predictions.")
-            return scores
+            # An empty list is a valid answer: the model is not confident
+            # about any class. make_verdict() then returns "unsure".
+            return parse_scores(r.json())
         except requests.HTTPError as e:
             if e.response is not None and e.response.status_code in (401, 403):
                 raise RuntimeError("The API key was refused. Check ROBOFLOW_API_KEY.") from e
