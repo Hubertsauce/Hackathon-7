@@ -63,6 +63,10 @@ def render_result(v: plantid.Verdict, photo=None) -> None:
         box = st.success
         title = "Native"
         line = f"Looks like **{info.get('name')}** ({pct} sure)."
+    elif v.top_class is None:
+        box = st.warning
+        title = "Unsure, do not touch"
+        line = "The model did not recognise any of the seven plants it knows."
     else:
         box = st.warning
         title = "Unsure, do not touch"
