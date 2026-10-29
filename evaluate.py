@@ -53,17 +53,18 @@ def main() -> None:
         scores = plantid.classify(plantid.prepare_image(path.read_bytes()),
                                   model_id, api_key)
         v = plantid.make_verdict(scores)
+        predicted = v.top_class or "none"   # "none" = model gave no answer
         rows.append({
             "file": f"{truth}/{path.name}",
             "true_class": truth,
-            "predicted_class": v.top_class,
+            "predicted_class": predicted,
             "confidence": round(v.top_confidence, 4),
             "giant_hogweed_score": round(dict(scores).get("giant_hogweed", 0), 4),
             "true_status": "invasive" if truth in plantid.INVASIVE else "native",
             "app_verdict": v.kind,
             "hogweed_alert": v.hogweed_alert,
         })
-        print(f"[{i:>3}/{len(photos)}] {truth:<18} -> {v.top_class:<18} "
+        print(f"[{i:>3}/{len(photos)}] {truth:<18} -> {predicted:<18} "
               f"{v.top_confidence:5.0%}  {v.kind}")
         time.sleep(0.1)
 
